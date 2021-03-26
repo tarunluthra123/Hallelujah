@@ -4,11 +4,11 @@ import { getAuthToken, getRefreshToken } from "./token";
 axios.defaults.baseURL = "http://localhost:8080";
 
 axios.interceptors.request.use(
-    (config) => {
-        config.headers["Authorization"] = `Bearer ${getAuthToken()}`;
-        config.headers["Content-Type"] = "application/json";
-        console.log({ config });
-        return config;
+    (request) => {
+        // request.headers["Authorization"] = `Bearer ${getAuthToken()}`;
+        request.headers["Content-Type"] = "application/json";
+        // console.log({ request });
+        return request;
     },
     (error) => {
         if (
@@ -36,7 +36,5 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
-console.log(axios);
 
 export default axios;

@@ -15,6 +15,7 @@ import styles from "../../styles/pages/signup-teacher.module.css";
 
 const TeacherSignup = (props) => {
     const [passwordMismatch, setPasswordMismatch] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
     const genderRef = useRef(null);
 
     function validateEmail(email) {
@@ -109,9 +110,19 @@ const TeacherSignup = (props) => {
             .post("/api/auth/signupt", data)
             .then((r) => {
                 console.log({ r });
+                if (
+                    r.status == 200 &&
+                    r.data == "User registration successful"
+                ) {
+                    console.log("Successfully registered");
+                    setErrorMessage(null);
+                } else {
+                    setErrorMessage(r.data);
+                }
             })
             .catch((e) => {
                 console.error({ e });
+                setErrorMessage("Some error occurred.");
             });
     }
 
@@ -222,6 +233,13 @@ const TeacherSignup = (props) => {
                         </label>
                     }
                 />
+                {errorMessage && (
+                    <Message size="mini" negative>
+                        <Message.Content>
+                            <Message.Header>{errorMessage}</Message.Header>
+                        </Message.Content>
+                    </Message>
+                )}
                 <br />
                 <div className={styles.btnDiv}>
                     <Button primary type="submit">
