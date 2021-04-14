@@ -12,12 +12,15 @@ import {
 } from "semantic-ui-react";
 import axios from "../../helpers/axios";
 import styles from "../../styles/pages/signup-teacher.module.css";
+import { useRouter } from "next/router";
 
 const TeacherSignup = (props) => {
     const [passwordMismatch, setPasswordMismatch] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [usernameError, setUsernameError] = useState(null);
     const [emailError, setEmailError] = useState(null);
+
+    const router = useRouter();
 
     const genderRef = useRef(null);
 
@@ -26,7 +29,7 @@ const TeacherSignup = (props) => {
         return re.test(email);
     }
 
-    function submitForm(event) {
+    async function submitForm(event) {
         const form = event.target;
         console.log(form);
         const [
@@ -108,25 +111,23 @@ const TeacherSignup = (props) => {
         };
 
         console.log({ data });
+        try {
+            const response = await axios.post("/api/auth/signupt", data);
 
-        axios
-            .post("/api/auth/signupt", data)
-            .then((r) => {
-                console.log({ r });
-                if (
-                    r.status == 200 &&
-                    r.data == "User registration successful"
-                ) {
-                    console.log("Successfully registered");
-                    setErrorMessage(null);
-                } else {
-                    setErrorMessage(r.data);
-                }
-            })
-            .catch((e) => {
-                console.error({ e });
-                setErrorMessage("Some error occurred.");
-            });
+            if (
+                response.status == 200 &&
+                response.data == "User registration successful"
+            ) {
+                console.log("Successfully registered");
+                setErrorMessage(null);
+                router.push("/");
+            } else {
+                setErrorMessage(r.data);
+            }
+        } catch (e) {
+            console.error({ e });
+            setErrorMessage("Some error occurred.");
+        }
     }
 
     async function emailBlurEvent(event) {
@@ -172,7 +173,8 @@ const TeacherSignup = (props) => {
                 return false;
             }
         } catch (err) {
-            console.log({ err });
+            console.error({ err });
+            return false;
         }
     }
 

@@ -17,7 +17,7 @@ export function getRefreshToken() {
 }
 
 export async function refreshAuthToken() {
-    const refreshUrl = "";
+    const refreshUrl = "/api/auth/refresh/token";
     const options = {
         refresh: getRefreshToken(),
     };

@@ -5,9 +5,11 @@ axios.defaults.baseURL = "http://localhost:8080";
 
 axios.interceptors.request.use(
     (request) => {
-        // request.headers["Authorization"] = `Bearer ${getAuthToken()}`;
+        const token = getAuthToken();
+        if (token) {
+            request.headers["Authorization"] = `Bearer ${token}`;
+        }
         request.headers["Content-Type"] = "application/json";
-        // console.log({ request });
         return request;
     },
     (error) => {

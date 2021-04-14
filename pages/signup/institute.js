@@ -15,6 +15,9 @@ import axios from "../../helpers/axios";
 export default function SignupInstitute() {
     const [passwordMismatch, setPasswordMismatch] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [usernameError, setUsernameError] = useState(null);
+    const [emailError, setEmailError] = useState(null);
+
     const boardRef = useRef();
 
     function validateEmail(email) {
@@ -111,6 +114,86 @@ export default function SignupInstitute() {
             });
     }
 
+    async function emailBlurEvent(event) {
+        const email = event.target.value;
+        const ok = validateEmail(email);
+        if (!ok) {
+            return;
+        }
+        try {
+            const response = await axios.get("/api/auth/emailverifications", {
+                params: {
+                    email,
+                },
+            });
+            if (response.status == 200) {
+                setEmailError(null);
+                console.log("Email ok");
+                return;
+            } else {
+                setEmailError({
+                    color: "red",
+                });
+            }
+        } catch (error) {
+            console.error({ error });
+        }
+    }
+
+    async function validateUsername(username) {
+        try {
+            const response = await axios.get(
+                "/api/auth/usernameverifications",
+                {
+                    params: {
+                        username,
+                    },
+                }
+            );
+            console.log({ response });
+            if (response.status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.error({ err });
+            return false;
+        }
+    }
+
+    function usernameOnFocus(event) {
+        console.log("Hello");
+        const username = event.target.value;
+        if (username.length <= 6) return;
+        setUsernameError({
+            heading: "Just one second",
+            message: "Validating username",
+            color: "teal",
+            icon: "circle notched",
+        });
+
+        const id = setInterval(async () => {
+            const usernameValidated = await validateUsername(username);
+            if (usernameValidated) {
+                clearInterval(id);
+                setUsernameError({
+                    heading: "Kudos",
+                    message: "Username available",
+                    color: "green",
+                    icon: "check circle",
+                });
+            } else {
+                setUsernameError({
+                    heading: "Oops",
+                    message: "Username already taken",
+                    color: "red",
+                    icon: "close",
+                });
+            }
+        }, 2000);
+    }
+
     return (
         <Layout>
             <h1>School Signup</h1>
@@ -123,13 +206,16 @@ export default function SignupInstitute() {
                     />
                 </Form.Group>
                 <Form.Group widths="equal">
-                    <Form.Field
-                        label="Email"
-                        control={Input}
-                        placeholder="john@abc.com"
-                    />
                     <Form.Field>
-                        <label>Phone Number:</label>
+                        <label>Email</label>
+                        <input
+                            label="Email"
+                            placeholder="john@abc.com"
+                            onBlur={emailBlurEvent}
+                        />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Phone Number</label>
                         <Form.Input
                             type="number"
                             minLength="10"
@@ -137,6 +223,15 @@ export default function SignupInstitute() {
                         ></Form.Input>
                     </Form.Field>
                 </Form.Group>
+                {emailError && (
+                    <Message icon size="mini" color={emailError.color}>
+                        <Icon name="cross" />
+                        <Message.Content>
+                            <Message.Header>Oops</Message.Header>
+                            Email is already taken by another user
+                        </Message.Content>
+                    </Message>
+                )}
                 <Form.Group widths="equal">
                     <Form.Field>
                         <label>Boards</label>
@@ -160,19 +255,27 @@ export default function SignupInstitute() {
                 </Form.Group>
                 <Form.Field width="16">
                     <label>Username</label>
-                    <Form.Input
+                    <input
                         type="text"
                         placeholder="john_doe"
                         height="100%"
-                    ></Form.Input>
+                        onFocus={usernameOnFocus}
+                    />
                 </Form.Field>
-                <Message icon size="mini">
-                    <Icon name="circle notched" loading />
-                    <Message.Content>
-                        <Message.Header>Just one second</Message.Header>
-                        Validating username
-                    </Message.Content>
-                </Message>
+                {usernameError && (
+                    <Message icon size="mini" color={usernameError.color}>
+                        <Icon
+                            name={usernameError.icon}
+                            loading={usernameError.icon == "circle notched"}
+                        />
+                        <Message.Content>
+                            <Message.Header>
+                                {usernameError.heading}
+                            </Message.Header>
+                            {usernameError.message}
+                        </Message.Content>
+                    </Message>
+                )}
                 <Form.Field>
                     <label>Password</label>
                     <Form.Input type="password"></Form.Input>
@@ -206,10 +309,12 @@ export default function SignupInstitute() {
                     label={
                         <label>
                             Lorem ipsum dolor sit, amet consectetur adipisicing
-                            elit. Harum facilis eveniet velit id! Nisi dolore ea
-                            adipisci? Laudantium provident, debitis officia
-                            reprehenderit molestias inventore deserunt, quaerat
-                            cum autem fuga eum.
+                            elit. Tenetur inventore voluptate magnam, laborum
+                            impedit necessitatibus fuga, maiores ipsam eius aut
+                            natus reprehenderit odit maxime delectus eum illo
+                            voluptatem explicabo nemo quisquam voluptates
+                            deserunt excepturi velit itaque dolore. Harum,
+                            officia facilis?
                         </label>
                     }
                 />
