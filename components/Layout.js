@@ -5,7 +5,7 @@ const Layout = (props) => {
     return (
         <>
             <header className={styles.layoutHeader}>
-                <span className="logo">Logo</span>
+                <span className={styles.logo}>Logo</span>
                 <nav className={styles.layoutNav}>
                     <span>Link 1</span>
                     <span>Link 2</span>

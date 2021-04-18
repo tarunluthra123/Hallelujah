@@ -3,3 +3,13 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+:root {
+    --headingLarge: 3.5rem;
+    --headingMedium: 3rem;
+    --headingSmall: 2.5rem;
+
+    --paragraphLarge: 2rem;
+    --paragraphMedium: 1.5rem;
+    --paragraphSmall: 1rem;
+}

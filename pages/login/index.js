@@ -10,8 +10,17 @@ import {
 } from "semantic-ui-react";
 import axios from "../../helpers/axios";
 import { setToken } from "../../helpers/token";
+import { useAuth } from "../../context/auth";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/auth";
 
 const LoginPage = (props) => {
+    const { setCurrentUser } = useAuth();
+    const router = useRouter();
+    const dispatch = useDispatch();
+
     async function loginFormSubmit(event) {
         const form = event.target;
         const [usernameInput, passwordInput] = form.elements;
@@ -32,17 +41,41 @@ const LoginPage = (props) => {
                 password,
             });
 
-            console.table(response);
+            console.log({ response });
+
             if (response.status == 200) {
-                const { authenticationToken, refreshToken, userId } = response;
+                const { authenticationToken, refreshToken } = response.data;
                 setToken(authenticationToken, refreshToken);
                 console.log({ authenticationToken, refreshToken });
+
+                setCurrentUser({
+                    username: response.data.username,
+                    id: response.data.userId,
+                    role: response.data.userRole,
+                });
+
+                dispatch(
+                    login({
+                        username: response.data.username,
+                        userId: response.data.userId,
+                        role: response.data.userRole,
+                    })
+                );
+
+                if (response.data.userRole == "teacher") {
+                    router.push("/t");
+                } else if (response.data.userRole == "school") {
+                    router.push("/s");
+                }
             } else {
                 alert("Username and password do not match");
                 return;
             }
         } catch (error) {
-            console.error(error);
+            console.error({ error });
+            alert(
+                `Error ${error?.response?.status} : Username and password do not match`
+            );
         }
     }
 
@@ -82,7 +115,7 @@ const LoginPage = (props) => {
                     </Form>
 
                     <Message>
-                        New to us? <a href="#">Sign Up</a>
+                        New to us? <Link href="/signup">Sign Up</Link>
                     </Message>
                 </Grid.Column>
             </Grid>

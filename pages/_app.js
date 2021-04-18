@@ -1,12 +1,13 @@
-import { AuthProvider } from "../context/auth";
+import store from "./redux/store";
+import { Provider } from "react-redux";
 import "../styles/global_styles.css";
 import "semantic-ui-css/semantic.min.css";
 
 function MyApp({ Component, pageProps }) {
     return (
-        <AuthProvider>
+        <Provider store={store}>
             <Component {...pageProps} />
-        </AuthProvider>
+        </Provider>
     );
 }
 

@@ -1,5 +1,8 @@
-export function setToken(token, refreshToken) {
-    localStorage.setItem("hallelujah_auth_token", token);
+export function setToken(authToken, refreshToken) {
+    if (!authToken || !refreshToken) {
+        return;
+    }
+    localStorage.setItem("hallelujah_auth_token", authToken);
     localStorage.setItem("hallelujah_refresh_token", refreshToken);
 }
 

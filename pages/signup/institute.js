@@ -25,7 +25,7 @@ export default function SignupInstitute() {
         return re.test(email);
     }
 
-    function submitForm(event) {
+    async function submitForm(event) {
         const form = event.target;
         console.log(form.elements);
         const [
@@ -93,25 +93,22 @@ export default function SignupInstitute() {
         };
 
         // console.log(data);
-
-        axios
-            .post("/api/auth/signups", data)
-            .then((response) => {
-                console.log({ response });
-                if (
-                    response.status == 200 &&
-                    response.data == "User registration successful"
-                ) {
-                    alert("User registration successful");
-                    setErrorMessage(null);
-                } else {
-                    setErrorMessage(response.data);
-                }
-            })
-            .catch((error) => {
-                console.error({ error });
-                setErrorMessage(error.message);
-            });
+        try {
+            const response = await axios.post("/api/auth/signups", data);
+            console.log({ response });
+            if (
+                response.status == 200 &&
+                response.data == "User registration successful"
+            ) {
+                alert("User registration successful");
+                setErrorMessage(null);
+            } else {
+                setErrorMessage(response.data);
+            }
+        } catch (error) {
+            console.error({ error });
+            setErrorMessage(error.message);
+        }
     }
 
     async function emailBlurEvent(event) {
