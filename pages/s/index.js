@@ -1,35 +1,28 @@
-import React, { useEffect } from "react";
 import Layout from "../../components/Layout";
 import { Segment, Grid, Dimmer, Loader } from "semantic-ui-react";
-import getUser from "../../helpers/user";
-import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
+import getProfile from "../helpers/profile";
+import { useSelector } from "react-redux";
 
-const TeacherHomePage = (props) => {
-    const router = useRouter();
-    const dispatch = useDispatch();
+const SchoolHomePage = (props) => {
     const auth = useSelector((state) => state.auth);
+    const profile = getProfile();
 
-    useEffect(() => {
-        if (!auth) {
-            return router.push("/login");
-        }
-    }, []);
+    console.log({ auth, profile });
 
     return (
         <Layout>
             <Segment>
-                {!currentUser?.profilePic && (
+                {!profile?.loaded && (
                     <Dimmer active>
                         <Loader size="mini">Loading</Loader>
                     </Dimmer>
                 )}
-                {currentUser?.profilePic && (
+                {profile?.loaded && (
                     <Grid>
                         <Grid.Row>
                             <Grid.Column width={10}>
-                                <Header>{currentUser.name}</Header>
-                                <p>{currentUser.description}</p>
+                                <Header>{profile.name}</Header>
+                                <p>{profile?.description}</p>
                             </Grid.Column>
                             <Grid.Column width={6}></Grid.Column>
                         </Grid.Row>
@@ -40,4 +33,4 @@ const TeacherHomePage = (props) => {
     );
 };
 
-export default TeacherHomePage;
+export default SchoolHomePage;

@@ -10,14 +10,12 @@ import {
 } from "semantic-ui-react";
 import axios from "../../helpers/axios";
 import { setToken } from "../../helpers/token";
-import { useAuth } from "../../context/auth";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/auth";
 
 const LoginPage = (props) => {
-    const { setCurrentUser } = useAuth();
     const router = useRouter();
     const dispatch = useDispatch();
 
@@ -47,12 +45,6 @@ const LoginPage = (props) => {
                 const { authenticationToken, refreshToken } = response.data;
                 setToken(authenticationToken, refreshToken);
                 console.log({ authenticationToken, refreshToken });
-
-                setCurrentUser({
-                    username: response.data.username,
-                    id: response.data.userId,
-                    role: response.data.userRole,
-                });
 
                 dispatch(
                     login({

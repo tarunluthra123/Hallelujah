@@ -4,14 +4,11 @@ import {
     Form,
     Checkbox,
     Button,
-    Input,
     Message,
     Icon,
-    Select,
     Dropdown,
 } from "semantic-ui-react";
 import axios from "../../helpers/axios";
-import styles from "../../styles/pages/signup-teacher.module.css";
 import { useRouter } from "next/router";
 
 const TeacherSignup = (props) => {
@@ -211,7 +208,7 @@ const TeacherSignup = (props) => {
 
     return (
         <Layout>
-            <h1>Teacher Signup</h1>
+            <h1 className="text-4xl mb-5 mt-5">Teacher Signup</h1>
             <Form onSubmit={submitForm}>
                 <Form.Group widths="equal">
                     <Form.Input
@@ -344,7 +341,7 @@ const TeacherSignup = (props) => {
                     </Message>
                 )}
                 <br />
-                <div className={styles.btnDiv}>
+                <div className="mt-4">
                     <Button primary type="submit">
                         Submit
                     </Button>
